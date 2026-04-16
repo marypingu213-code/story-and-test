@@ -186,7 +186,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDocs, getDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase 初始化 ---
@@ -197,7 +197,6 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         let user = null;
-        let currentBookId = 'default_book';
 
         // --- 核心資料 ---
         let questionBank = [
@@ -219,18 +218,28 @@
         // --- 登入控制 (Rule 3) ---
         const initAuth = async () => {
             try {
-                await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
-                    if (user) loadShelf();
-                });
-            } catch (err) { console.error("Auth Error", err); }
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) { 
+                console.error("Firebase Auth Error:", err); 
+            }
         };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) {
+                loadShelf();
+            }
+        });
+
         initAuth();
 
         // --- 儲存功能 (鎖定當前故事) ---
         window.saveProject = async () => {
-            if (!user) return alert("系統連線中，請稍候...");
+            if (!auth.currentUser) return alert("系統尚未登入，請稍候...");
             const title = bookTitleInput.value.trim();
             if (!title || title === "未命名故事") return alert("請先輸入繪本名稱再儲存。");
 
@@ -248,49 +257,62 @@
                 await setDoc(bookDoc, data);
                 alert(`「${title}」已成功儲存並鎖定！您可以在書櫃中找到它。`);
                 loadShelf();
-            } catch (err) { alert("儲存失敗，請檢查網路。"); }
+            } catch (err) { 
+                console.error("Save Error", err);
+                alert("儲存失敗，請確認權限。"); 
+            }
         };
 
         // --- 載入書櫃 ---
         const loadShelf = async () => {
-            if (!user) return;
+            if (!auth.currentUser) return;
             const shelfList = document.getElementById('shelfList');
-            const booksCol = collection(db, 'artifacts', appId, 'public', 'data', 'books');
-            const snapshot = await getDocs(booksCol);
-            
-            if (snapshot.empty) {
-                shelfList.innerHTML = `<p class="text-center text-slate-400 py-10 italic">書櫃目前空空的...</p>`;
-                return;
-            }
+            try {
+                const booksCol = collection(db, 'artifacts', appId, 'public', 'data', 'books');
+                const snapshot = await getDocs(booksCol);
+                
+                if (snapshot.empty) {
+                    shelfList.innerHTML = `<p class="text-center text-slate-400 py-10 italic">書櫃目前空空的...</p>`;
+                    return;
+                }
 
-            shelfList.innerHTML = snapshot.docs.map(docSnap => {
-                const b = docSnap.data();
-                return `
-                    <div onclick="switchBook('${docSnap.id}')" class="book-item bg-indigo-50 border-2 border-indigo-100 p-4 rounded-2xl cursor-pointer hover:bg-white hover:border-indigo-400 transition-all shadow-sm flex justify-between items-center">
-                        <div>
-                            <div class="font-bold text-indigo-700">${b.title}</div>
-                            <div class="text-xs text-slate-400">最後儲存：${new Date(b.lastUpdate).toLocaleString()}</div>
+                shelfList.innerHTML = snapshot.docs.map(docSnap => {
+                    const b = docSnap.data();
+                    return `
+                        <div onclick="switchBook('${docSnap.id}')" class="book-item bg-indigo-50 border-2 border-indigo-100 p-4 rounded-2xl cursor-pointer hover:bg-white hover:border-indigo-400 transition-all shadow-sm flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-indigo-700">${b.title}</div>
+                                <div class="text-xs text-slate-400">最後儲存：${new Date(b.lastUpdate).toLocaleString()}</div>
+                            </div>
+                            <span class="text-xl">📖</span>
                         </div>
-                        <span class="text-xl">📖</span>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Load Shelf Error", err);
+            }
         };
 
         window.switchBook = async (bookId) => {
             if (isRecording) return alert("請先停止錄音再切換。");
-            const bookDoc = doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId);
-            const snap = await getDoc(bookDoc);
-            if (snap.exists()) {
-                const b = snap.data();
-                bookTitleInput.value = b.title;
-                storyEditor.value = b.text;
-                questionBank = b.questions;
-                fullTextDisplay.innerText = b.text || "尚未錄製文字...";
-                segments = []; // 音檔目前隨瀏覽器會話失效，下載後的音檔需由用戶自行保管或上傳至其他空間
-                renderSegments();
-                closeShelf();
-                alert(`已成功切換至故事：${b.title}`);
+            if (!auth.currentUser) return;
+            
+            try {
+                const bookDoc = doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId);
+                const snap = await getDoc(bookDoc);
+                if (snap.exists()) {
+                    const b = snap.data();
+                    bookTitleInput.value = b.title;
+                    storyEditor.value = b.text;
+                    questionBank = b.questions;
+                    fullTextDisplay.innerText = b.text || "尚未錄製文字...";
+                    segments = [];
+                    renderSegments();
+                    closeShelf();
+                    alert(`已成功切換至故事：${b.title}`);
+                }
+            } catch (err) {
+                console.error("Switch Book Error", err);
             }
         };
 
