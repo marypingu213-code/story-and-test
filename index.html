@@ -8,57 +8,32 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
         
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-        }
-
-        .rounded-card {
-            border-radius: 2rem;
-        }
-
-        .voice-active {
-            animation: pulse 1.5s infinite;
-            background-color: #ef4444 !important;
-        }
-
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .rounded-card { border-radius: 2rem; }
+        .voice-active { animation: pulse 1.5s infinite; background-color: #ef4444 !important; }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
             70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
+        /* 列印樣式設定 */
         @media print {
             .no-print { display: none !important; }
             body { background-color: white !important; padding: 0 !important; }
-            .print-area { display: block !important; padding: 1cm; }
-            .print-question { page-break-inside: avoid; margin-bottom: 1.5rem; font-size: 14pt; line-height: 1.8; }
-            .print-options { padding-left: 2.5rem; }
+            @page { margin: 1.5cm; } /* 減少邊距以嘗試隱藏瀏覽器預設頁首尾 */
+            .print-area { display: block !important; }
+            .print-header { display: flex; justify-content: flex-end; font-size: 10pt; color: #666; margin-bottom: 5px; }
+            .print-title { text-align: center; font-size: 18pt; font-weight: bold; margin-bottom: 15px; }
+            .print-info { display: flex; justify-content: space-between; border-bottom: 1.5px solid black; padding-bottom: 5px; margin-bottom: 20px; font-size: 12pt; }
+            .print-question { page-break-inside: avoid; margin-bottom: 20px; font-size: 13pt; line-height: 1.8; }
+            .print-bracket { font-family: monospace; letter-spacing: 2px; }
+            .print-options { padding-left: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
         }
 
         .print-area { display: none; }
-        
         .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        /* 頁面堆疊效果圖示 */
-        .page-stack {
-            position: relative;
-            width: 30px;
-            height: 40px;
-        }
-        .page-item {
-            position: absolute;
-            width: 20px;
-            height: 30px;
-            background: white;
-            border: 2px solid #6366f1;
-            border-radius: 4px;
-        }
-        .stack-1 { transform: rotate(-10deg); left: 0; z-index: 10; }
-        .stack-2 { transform: rotate(0deg); left: 8px; top: 3px; z-index: 5; opacity: 0.8; }
-        .stack-3 { transform: rotate(10deg); left: 16px; top: 6px; z-index: 1; opacity: 0.6; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -68,107 +43,71 @@
             <h1 class="text-4xl font-bold text-indigo-700 mb-2 flex items-center justify-center gap-3">
                 <span>💎</span> 寶石鑑定室有聲書製作平台 <span>💎</span>
             </h1>
-            <p class="text-slate-500 text-lg">分段錄製故事，輕鬆製作整本有聲書！</p>
+            <p class="text-slate-500 text-lg">分段錄製故事，隨時編輯題庫，輕鬆製作有聲書！</p>
         </header>
 
+        <!-- 上半部：錄音與編輯 -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            
-            <!-- Left Side: Story Editor -->
             <div class="lg:col-span-7">
                 <div class="bg-white p-6 rounded-card shadow-xl border-4 border-indigo-100 h-full flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                            <span>✍️</span> 故事內容編輯
-                        </h2>
+                        <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2"><span>✍️</span> 故事內容編輯</h2>
                         <div class="flex space-x-2">
                             <button id="micBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full transition-all shadow-lg flex items-center font-bold">
-                                <span id="micIcon" class="mr-2 text-xl">🎤</span>
-                                <span id="micText">繼續錄下一段</span>
+                                <span id="micIcon" class="mr-2 text-xl">🎤</span><span id="micText">繼續錄下一段</span>
                             </button>
                             <button id="clearAllBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-500 px-4 py-2 rounded-full text-sm font-medium">重置全部</button>
                         </div>
                     </div>
-                    
-                    <textarea id="storyEditor" class="flex-1 w-full min-h-[400px] p-6 border-2 border-dashed border-indigo-50 rounded-2xl focus:ring-2 focus:ring-indigo-400 outline-none text-xl leading-relaxed custom-scroll bg-indigo-50/10" placeholder="點擊錄音鈕開始錄製故事內容..."></textarea>
+                    <textarea id="storyEditor" class="flex-1 w-full min-h-[400px] p-6 border-2 border-dashed border-indigo-50 rounded-2xl focus:ring-2 focus:ring-indigo-400 outline-none text-xl leading-relaxed custom-scroll bg-indigo-50/10" placeholder="點擊錄音鈕開始錄製故事..."></textarea>
                 </div>
             </div>
 
-            <!-- Right Side: Audio Management -->
             <div class="lg:col-span-5">
                 <div class="bg-white p-6 rounded-card shadow-xl border-4 border-emerald-100 flex flex-col h-full min-h-[500px]">
                     <div class="flex justify-between items-center mb-4 border-b pb-4">
-                        <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                            <span>🎧</span> 有聲書分段
-                        </h2>
+                        <h2 class="text-xl font-bold text-slate-700">🎧 有聲書分段</h2>
                         <div class="flex gap-2">
-                            <button id="btnA" class="hidden bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
-                                <span class="bg-white/20 px-1 rounded font-mono">A</span> 🔊 產生有聲書
-                            </button>
-                            <button id="btnB" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
-                                <span class="bg-white/20 px-1 rounded font-mono">B</span> 💾 彙整下載
-                            </button>
+                            <button id="btnA" class="hidden bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">A 🔊 產生有聲書</button>
+                            <button id="btnB" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">B 💾 彙整下載</button>
                         </div>
                     </div>
-                    
                     <div id="segmentsList" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scroll mt-4">
                         <div class="flex flex-col items-center justify-center h-full text-slate-300 italic py-10">
-                            <span class="text-5xl mb-4">📀</span>
-                            <p>尚未錄製任何段落</p>
+                            <span class="text-5xl mb-4">📀</span><p>尚未錄製任何段落</p>
                         </div>
                     </div>
-
-                    <div id="mergeLoading" class="hidden mt-4 text-center text-sm text-indigo-500 font-bold animate-pulse">
-                        💎 正在鑑定並合併音檔中...
-                    </div>
+                    <div id="mergeLoading" class="hidden mt-4 text-center text-sm text-indigo-500 font-bold animate-pulse">💎 正在處理音檔中...</div>
                 </div>
             </div>
         </div>
 
-        <!-- 下半部 5 大功能區 -->
+        <!-- 下半部：功能區塊 -->
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            
-            <!-- 1. 繪本名稱 & 有聲書播放器 -->
-            <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 group min-h-[160px]">
-                <span class="text-3xl group-hover:scale-110 transition-transform">📖</span>
-                <label class="text-[10px] text-slate-400 block uppercase tracking-widest">1. 繪本名稱</label>
-                <input type="text" id="bookTitleInput" class="w-full text-center font-bold text-slate-700 border-b-2 border-indigo-100 focus:border-indigo-400 outline-none px-1 mb-2" value="圈圈村的故事">
-                
-                <!-- 線上有聲書聆聽位置 (由 Button A 觸發) -->
-                <div id="bookAudioContainer" class="hidden w-full transition-all animate-fadeIn">
-                    <p class="text-[9px] text-indigo-500 font-bold mb-1">🎧 完整線上有聲書</p>
-                    <audio id="bookAudioPlayer" controls class="w-full h-8 shadow-inner"></audio>
-                </div>
+            <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 min-h-[160px]">
+                <span class="text-3xl">📖</span><label class="text-[10px] text-slate-400 uppercase tracking-widest">1. 繪本名稱</label>
+                <input type="text" id="bookTitleInput" class="w-full text-center font-bold text-slate-700 border-b-2 border-indigo-100 focus:border-indigo-400 outline-none px-1" value="圈圈村的故事">
+                <div id="bookAudioContainer" class="hidden w-full mt-2"><audio id="bookAudioPlayer" controls class="w-full h-8"></audio></div>
             </div>
 
-            <!-- 2. 繪本內容 (檢視) -->
             <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 min-h-[160px]">
-                <div class="page-stack mb-1">
-                    <div class="page-item stack-3 border-indigo-200"></div>
-                    <div class="page-item stack-2 border-indigo-300"></div>
-                    <div class="page-item stack-1 border-indigo-400"></div>
-                </div>
-                <label class="text-[10px] text-slate-400 block uppercase tracking-widest">2. 繪本內容 (檢視)</label>
+                <span class="text-3xl">📝</span><label class="text-[10px] text-slate-400 uppercase tracking-widest">2. 內容檢視</label>
                 <div id="fullTextDisplay" class="text-[10px] text-slate-400 h-16 overflow-y-auto px-2 leading-tight custom-scroll">尚未錄製文字...</div>
             </div>
 
-            <!-- 3. 題庫與語句調整 -->
-            <button id="viewBankBtn" class="bg-white hover:bg-sky-50 p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[160px]">
-                <span class="text-3xl group-hover:rotate-12 transition-transform">🔍</span>
-                <label class="text-[10px] text-slate-400 block uppercase tracking-widest">3. 題庫與語句調整</label>
-                <span class="text-sky-600 font-bold text-sm">查看完整題庫</span>
+            <button id="editBankBtn" class="bg-white hover:bg-sky-50 p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[160px]">
+                <span class="text-3xl group-hover:rotate-12 transition-all">⚙️</span>
+                <label class="text-[10px] text-slate-400 uppercase tracking-widest">3. 題庫與語句調整</label>
+                <span class="text-sky-600 font-bold text-sm">編輯完整題庫</span>
             </button>
 
-            <!-- 4. 立即線上測驗 -->
-            <button id="startQuizBtn" class="bg-orange-500 hover:bg-orange-600 p-4 rounded-card shadow-xl flex flex-col items-center justify-center text-center gap-2 transition-all group text-white border-4 border-orange-400 min-h-[160px]">
-                <span class="text-3xl group-hover:scale-110 transition-transform">📝</span>
-                <label class="text-[10px] opacity-80 block uppercase tracking-widest text-white">4. 立即線上測驗</label>
-                <span class="font-bold text-sm">開始挑戰測驗</span>
+            <button id="startQuizBtn" class="bg-orange-500 hover:bg-orange-600 p-4 rounded-card shadow-xl flex flex-col items-center justify-center text-center gap-2 text-white border-4 border-orange-400 min-h-[160px]">
+                <span class="text-3xl">📝</span><label class="text-[10px] opacity-80 uppercase text-white">4. 立即線上測驗</label>
+                <span class="font-bold text-sm">開始挑戰答題</span>
             </button>
 
-            <!-- 5. 列印 A4 測驗卷 -->
-            <button onclick="preparePrint()" class="bg-emerald-50 hover:bg-emerald-100 p-4 rounded-card shadow-lg border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-2 transition-all group text-emerald-700 min-h-[160px]">
-                <span class="text-3xl group-hover:-translate-y-1 transition-transform">🖨️</span>
-                <label class="text-[10px] opacity-60 block uppercase tracking-widest">5. 列印 A4 測驗卷</label>
+            <button onclick="preparePrint()" class="bg-emerald-50 hover:bg-emerald-100 p-4 rounded-card shadow-lg border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-2 text-emerald-700 min-h-[160px]">
+                <span class="text-3xl">🖨️</span><label class="text-[10px] opacity-60 uppercase">5. 列印 A4 測驗卷</label>
                 <span class="font-bold text-sm">輸出紙本測驗</span>
             </button>
         </div>
@@ -185,24 +124,40 @@
             <div id="quizFooter" class="mt-8 flex justify-between items-center gap-4 border-t pt-4">
                 <p id="quizProgress" class="text-slate-500 font-bold">第 1 / 5 題</p>
                 <div id="feedbackMsg" class="font-bold text-lg"></div>
-                <button id="nextBtn" class="hidden bg-indigo-600 text-white px-8 py-2 rounded-full font-bold shadow-md hover:bg-indigo-700 transition-colors">下一題 ➡️</button>
-                <button id="restartBtn" class="hidden bg-emerald-600 text-white px-8 py-2 rounded-full font-bold shadow-md hover:bg-emerald-700 transition-colors">重新抽題</button>
+                <button id="nextBtn" class="hidden bg-indigo-600 text-white px-8 py-2 rounded-full font-bold shadow-md">下一題 ➡️</button>
+                <button id="restartBtn" class="hidden bg-emerald-600 text-white px-8 py-2 rounded-full font-bold shadow-md">重新抽題</button>
             </div>
         </div>
     </div>
 
-    <!-- 紙本輸出區塊 -->
+    <!-- 題庫編輯 Modal -->
+    <div id="bankModal" class="fixed inset-0 bg-slate-900/80 hidden z-50 flex items-center justify-center p-4 no-print backdrop-blur-sm">
+        <div class="bg-white w-full max-w-4xl rounded-card shadow-2xl p-8 max-h-[90vh] overflow-y-auto border-t-8 border-sky-500">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-2xl font-bold text-sky-600">⚙️ 編輯題庫資料庫</h3>
+                <button onclick="closeBank()" class="text-slate-400 hover:text-slate-600 text-3xl font-bold">&times;</button>
+            </div>
+            <div id="bankEditorList" class="space-y-8"></div>
+            <div class="mt-8 pt-4 border-t flex justify-end gap-2">
+                <button onclick="addQuestion()" class="bg-indigo-100 text-indigo-700 px-6 py-2 rounded-full font-bold">➕ 新增題目</button>
+                <button onclick="saveBank()" class="bg-sky-600 text-white px-10 py-2 rounded-full font-bold shadow-lg">💾 儲存變更</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 紙本列印區域 -->
     <div id="paperOutput" class="print-area">
-        <h1 class="text-3xl font-bold text-center mb-8" id="printBookTitle">《圈圈村的故事》閱讀理解測驗卷</h1>
-        <div class="flex justify-between mb-8 border-b-2 border-black pb-2">
-            <span>班級：__________</span> <span>座號：__________</span> <span>姓名：__________</span> <span>得分：__________</span>
+        <div class="print-header">寶石鑑定室有聲書製作平台</div>
+        <div class="print-title" id="printQuizTitle">《圈圈村的故事》閱讀理解測驗卷</div>
+        <div class="print-info">
+            <span>班級：__________</span><span>座號：__________</span><span>姓名：__________</span><span>得分：__________</span>
         </div>
         <div id="printQuestionContainer"></div>
     </div>
 
     <script>
-        // --- 題庫資料 ---
-        const questionBank = [
+        // --- 核心資料庫 (可編輯) ---
+        let questionBank = [
             { q: "從天空中往下看，圈圈村的形狀看起來像什麼呢？", options: ["一個大三角形", "一個甜甜圈", "一塊大餅乾", "一顆愛心"], ans: 1 },
             { q: "圈圈村的人，長相通常具備什麼特徵？", options: ["全身上下都是尖尖的", "鼻子、眼睛、臉都是圓圓的", "每個人都戴著尖尖的帽子", "他們長得非常高大"], ans: 1 },
             { q: "下列哪一個不是圈圈村裡「圓圓的東西」？", options: ["鵝卵石", "路燈", "長椅", "尖尖的鐵剪刀"], ans: 3 },
@@ -211,7 +166,6 @@
             { q: "最後是誰出面解釋，才解開了大家的誤會？", options: ["村長", "小小朋友", "大橘貓", "西瓜伯"], ans: 3 }
         ];
 
-        // --- 狀態管理 ---
         let segments = [];
         let isRecording = false;
         let mediaRecorder;
@@ -220,20 +174,13 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         const storyEditor = document.getElementById('storyEditor');
-        const micBtn = document.getElementById('micBtn');
-        const micText = document.getElementById('micText');
-        const segmentsList = document.getElementById('segmentsList');
-        const btnA = document.getElementById('btnA');
-        const btnB = document.getElementById('btnB');
         const fullTextDisplay = document.getElementById('fullTextDisplay');
-        const bookAudioContainer = document.getElementById('bookAudioContainer');
         const bookAudioPlayer = document.getElementById('bookAudioPlayer');
 
         // 文字同步
-        storyEditor.addEventListener('input', () => {
-            fullTextDisplay.innerText = storyEditor.value || "尚未錄製任何文字內容...";
-        });
+        storyEditor.addEventListener('input', () => { fullTextDisplay.innerText = storyEditor.value || "尚未錄製文字..."; });
 
+        // 錄音設定
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = true;
@@ -245,86 +192,77 @@
                     if (e.results[i].isFinal) final += e.results[i][0].transcript;
                 }
                 if (final) {
-                    const lastChar = storyEditor.value.trim().slice(-1);
-                    const separator = (lastChar && !['。','！','？'].includes(lastChar)) ? '，' : ' ';
+                    const separator = (storyEditor.value.trim() && !/[。！？]$/.test(storyEditor.value.trim())) ? '，' : ' ';
                     storyEditor.value = (storyEditor.value.trim() ? storyEditor.value.trim() + separator : "") + final;
                     fullTextDisplay.innerText = storyEditor.value;
                 }
             };
         }
 
-        micBtn.onclick = async () => {
-            if (isRecording) stopRec(); else startRec();
+        document.getElementById('micBtn').onclick = async () => {
+            if (isRecording) {
+                if(mediaRecorder) mediaRecorder.stop();
+                if(recognition) recognition.stop();
+                isRecording = false;
+                document.getElementById('micBtn').classList.remove('voice-active');
+                document.getElementById('micText').innerText = "繼續錄下一段";
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                        segments.push({ blob, url: URL.createObjectURL(blob) });
+                        renderSegments();
+                    };
+                    mediaRecorder.start();
+                    if (recognition) recognition.start();
+                    isRecording = true;
+                    document.getElementById('micBtn').classList.add('voice-active');
+                    document.getElementById('micText').innerText = "錄音中...點擊停止";
+                } catch (err) { alert("無法開啟麥克風！"); }
+            }
         };
-
-        async function startRec() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                    const url = URL.createObjectURL(blob);
-                    segments.push({ blob, url });
-                    renderSegments();
-                };
-                mediaRecorder.start();
-                if (recognition) recognition.start();
-                isRecording = true;
-                micBtn.classList.add('voice-active');
-                micText.innerText = "錄音中...點擊停止";
-            } catch (err) { alert("無法開啟麥克風！"); }
-        }
-
-        function stopRec() {
-            if (mediaRecorder) mediaRecorder.stop();
-            if (recognition) recognition.stop();
-            isRecording = false;
-            micBtn.classList.remove('voice-active');
-            micText.innerText = "繼續錄下一段";
-        }
 
         function renderSegments() {
-            if (segments.length > 0) {
-                btnA.classList.remove('hidden');
-                btnB.classList.remove('hidden');
-            }
-            segmentsList.innerHTML = segments.map((seg, i) => `
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between gap-3 shadow-sm hover:shadow-md transition-all">
+            const btnA = document.getElementById('btnA');
+            const btnB = document.getElementById('btnB');
+            if (segments.length > 0) { btnA.classList.remove('hidden'); btnB.classList.remove('hidden'); }
+            document.getElementById('segmentsList').innerHTML = segments.map((seg, i) => `
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between shadow-sm">
                     <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <span class="bg-indigo-600 text-white w-7 h-7 rounded-full text-[10px] flex items-center justify-center font-bold">P${i + 1}</span>
-                            <span class="absolute -top-1 -right-1 text-[10px]">✅</span>
-                        </div>
+                        <span class="bg-indigo-600 text-white w-7 h-7 rounded-full text-[10px] flex items-center justify-center font-bold">P${i + 1} ✅</span>
                         <audio src="${seg.url}" controls class="h-8 w-40 md:w-48"></audio>
                     </div>
-                    <button onclick="deleteSegment(${i})" class="text-red-400 hover:bg-red-50 p-2 rounded-full transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
+                    <button onclick="deleteSeg(${i})" class="text-red-400 hover:bg-red-50 p-2 rounded-full">🗑️</button>
                 </div>
             `).join('');
-            if (segments.length === 0) {
-                segmentsList.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-300 italic py-10"><span class="text-5xl mb-4">📀</span><p>尚未錄製任何段落</p></div>`;
-            }
         }
 
-        window.deleteSegment = (idx) => {
-            if (confirm("刪除這段錄音嗎？")) { segments.splice(idx, 1); renderSegments(); }
-        }
+        window.deleteSeg = (idx) => { if(confirm("刪除這段錄音嗎？")) { segments.splice(idx, 1); renderSegments(); } };
 
-        document.getElementById('clearAllBtn').onclick = () => {
-            if (confirm("全部重置嗎？")) {
-                segments = []; storyEditor.value = "";
-                fullTextDisplay.innerText = "尚未錄製文字...";
-                renderSegments();
-                bookAudioContainer.classList.add('hidden');
-                bookAudioPlayer.src = "";
-            }
+        document.getElementById('btnA').onclick = async () => {
+            document.getElementById('mergeLoading').classList.remove('hidden');
+            const blob = await mergeAudios();
+            bookAudioPlayer.src = URL.createObjectURL(blob);
+            document.getElementById('bookAudioContainer').classList.remove('hidden');
+            bookAudioPlayer.play();
+            document.getElementById('mergeLoading').classList.add('hidden');
         };
 
-        // 合併音檔核心
-        async function getMergedAudio() {
+        document.getElementById('btnB').onclick = async () => {
+            document.getElementById('mergeLoading').classList.remove('hidden');
+            const blob = await mergeAudios();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${document.getElementById('bookTitleInput').value}_完整有聲書.wav`;
+            a.click();
+            document.getElementById('mergeLoading').classList.add('hidden');
+        };
+
+        async function mergeAudios() {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const buffers = await Promise.all(segments.map(async s => ctx.decodeAudioData(await s.blob.arrayBuffer())));
             const totalLen = buffers.reduce((a, b) => a + b.length, 0);
@@ -337,73 +275,95 @@
             return bufferToWav(final);
         }
 
-        // 按鈕 A: 線上播放 (匯入到書名區)
-        btnA.onclick = async () => {
-            const loading = document.getElementById('mergeLoading');
-            loading.classList.remove('hidden');
-            try {
-                const blob = await getMergedAudio();
-                const url = URL.createObjectURL(blob);
-                bookAudioPlayer.src = url;
-                bookAudioContainer.classList.remove('hidden');
-                bookAudioPlayer.play();
-                // 滾動到書名區讓使用者看見
-                document.getElementById('bookTitleInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } catch (err) { alert("產生有聲書失敗！"); }
-            loading.classList.add('hidden');
+        // --- 題庫編輯邏輯 ---
+        document.getElementById('editBankBtn').onclick = () => {
+            const list = document.getElementById('bankEditorList');
+            list.innerHTML = questionBank.map((q, i) => `
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 relative">
+                    <button onclick="removeQuestion(${i})" class="absolute top-4 right-4 text-red-500 font-bold">❌ 刪除</button>
+                    <div class="mb-4">
+                        <label class="block text-xs text-slate-400 mb-1 font-bold">第 ${i+1} 題 題目描述：</label>
+                        <input type="text" class="w-full p-3 border rounded-xl" id="q_txt_${i}" value="${q.q}">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${q.options.map((opt, oi) => `
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1">選項 ${String.fromCharCode(65+oi)}：</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" class="flex-1 p-2 border rounded-lg text-sm" id="q_${i}_opt_${oi}" value="${opt}">
+                                    <input type="radio" name="correct_${i}" ${q.ans === oi ? 'checked' : ''} value="${oi}" title="正確答案">
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('bankModal').classList.remove('hidden');
         };
 
-        // 按鈕 B: 下載
-        btnB.onclick = async () => {
-            const loading = document.getElementById('mergeLoading');
-            loading.classList.remove('hidden');
-            try {
-                const blob = await getMergedAudio();
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `${document.getElementById('bookTitleInput').value}_完整有聲書.wav`;
-                a.click();
-            } catch (err) { alert("下載失敗！"); }
-            loading.classList.add('hidden');
+        window.addQuestion = () => {
+            questionBank.push({ q: "新題目敘述", options: ["選項A", "選項B", "選項C", "選項D"], ans: 0 });
+            document.getElementById('editBankBtn').click();
         };
 
-        function bufferToWav(abuffer) {
-            let numOfChan = abuffer.numberOfChannels, length = abuffer.length * numOfChan * 2 + 44,
-                buffer = new ArrayBuffer(length), view = new DataView(buffer),
-                channels = [], i, sample, offset = 0, pos = 0;
-            const setUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
-            const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
-            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
-            setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
-            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan);
-            setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
-            for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
-            while(pos < length) {
-                for(i = 0; i < numOfChan; i++) {
-                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
-                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0;
-                    view.setInt16(pos, sample, true); pos += 2;
-                }
-                offset++;
+        window.removeQuestion = (idx) => {
+            if(confirm("確定刪除此題嗎？")) {
+                questionBank.splice(idx, 1);
+                document.getElementById('editBankBtn').click();
             }
-            return new Blob([buffer], {type: "audio/wav"});
-        }
+        };
 
-        // 測驗與列印
-        let selectedQuestions = [];
+        window.saveBank = () => {
+            const newList = [];
+            questionBank.forEach((_, i) => {
+                const qText = document.getElementById(`q_txt_${i}`).value;
+                const opts = [
+                    document.getElementById(`q_${i}_opt_0`).value,
+                    document.getElementById(`q_${i}_opt_1`).value,
+                    document.getElementById(`q_${i}_opt_2`).value,
+                    document.getElementById(`q_${i}_opt_3`).value,
+                ];
+                const correct = parseInt(document.querySelector(`input[name="correct_${i}"]:checked`).value);
+                newList.push({ q: qText, options: opts, ans: correct });
+            });
+            questionBank = newList;
+            closeBank();
+            alert("題庫儲存成功！");
+        };
+
+        window.closeBank = () => document.getElementById('bankModal').classList.add('hidden');
+
+        // --- 線上測驗邏輯 (隨機化選項) ---
+        let currentQuiz = [];
         let currentIdx = 0;
         let score = 0;
 
         document.getElementById('startQuizBtn').onclick = () => {
-            selectedQuestions = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, 5);
+            if(questionBank.length < 1) return alert("題庫中沒有題目喔！");
+            
+            // 隨機選 5 題 (若不夠 5 題則全選)
+            let shuffledBank = [...questionBank].sort(() => Math.random() - 0.5);
+            let pool = shuffledBank.slice(0, Math.min(5, shuffledBank.length));
+            
+            // 選項亂序處理
+            currentQuiz = pool.map(item => {
+                let originalOptions = item.options.map((text, i) => ({ text, isCorrect: i === item.ans }));
+                let shuffledOptions = originalOptions.sort(() => Math.random() - 0.5);
+                return {
+                    q: item.q,
+                    options: shuffledOptions.map(o => o.text),
+                    ans: shuffledOptions.findIndex(o => o.isCorrect)
+                };
+            });
+
             currentIdx = 0; score = 0;
             document.getElementById('quizModal').classList.remove('hidden');
             showQuestion();
         };
 
         function showQuestion() {
-            const data = selectedQuestions[currentIdx];
-            document.getElementById('quizProgress').innerText = `第 ${currentIdx + 1} / 5 題`;
+            const data = currentQuiz[currentIdx];
+            document.getElementById('quizProgress').innerText = `第 ${currentIdx + 1} / ${currentQuiz.length} 題`;
             document.getElementById('feedbackMsg').innerText = "";
             document.getElementById('nextBtn').classList.add('hidden');
             document.getElementById('restartBtn').classList.add('hidden');
@@ -415,45 +375,68 @@
         }
 
         window.checkAns = (idx) => {
-            const data = selectedQuestions[currentIdx];
+            const data = currentQuiz[currentIdx];
             const btns = document.getElementById('quizBody').querySelectorAll('button');
             btns.forEach(b => b.disabled = true);
             if (idx === data.ans) {
                 btns[idx].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
-                document.getElementById('feedbackMsg').innerHTML = "<span class='text-green-600 font-bold'>✨ 鑑定正確！</span>";
+                document.getElementById('feedbackMsg').innerHTML = "<span class='text-green-600 font-bold'>✨ 答題正確！</span>";
                 score++;
             } else {
                 btns[idx].classList.add('bg-red-100', 'border-red-500', 'text-red-800');
                 btns[data.ans].classList.add('bg-green-50', 'border-green-300');
-                document.getElementById('feedbackMsg').innerHTML = "<span class='text-red-500 font-bold'>❌ 鑑定錯誤！</span>";
+                document.getElementById('feedbackMsg').innerHTML = "<span class='text-red-500 font-bold'>❌ 答題錯誤！</span>";
             }
-            if (currentIdx < 4) document.getElementById('nextBtn').classList.remove('hidden'); else showResult();
+            if (currentIdx < currentQuiz.length - 1) document.getElementById('nextBtn').classList.remove('hidden'); else showResult();
         };
 
         document.getElementById('nextBtn').onclick = () => { currentIdx++; showQuestion(); };
         function showResult() {
-            document.getElementById('quizBody').innerHTML = `<div class="text-center py-8"><h4 class="text-4xl font-bold mb-4">挑戰賽結束</h4><div class="text-6xl mb-4">${score === 5 ? '🏆' : '💎'}</div><p class="text-2xl text-indigo-600 font-bold">得分：${score * 20} 分</p></div>`;
+            document.getElementById('quizBody').innerHTML = `<div class="text-center py-8"><h4 class="text-4xl font-bold mb-4 text-slate-800">挑戰賽結束</h4><div class="text-6xl mb-4">🏆</div><p class="text-2xl text-indigo-600 font-bold">得分：${Math.round(score * (100/currentQuiz.length))} 分</p></div>`;
+            document.getElementById('restartBtn').innerText = "重新抽題";
             document.getElementById('restartBtn').classList.remove('hidden');
             document.getElementById('restartBtn').onclick = () => { document.getElementById('startQuizBtn').click(); };
         }
 
         window.closeQuiz = () => document.getElementById('quizModal').classList.add('hidden');
-        document.getElementById('viewBankBtn').onclick = () => alert("【完整題庫查看】\n\n" + questionBank.map((v, i) => (i+1) + ". " + v.q).join("\n"));
 
+        // --- 列印功能 ---
         function preparePrint() {
             const container = document.getElementById('printQuestionContainer');
             container.innerHTML = "";
-            document.getElementById('printBookTitle').innerText = `《${document.getElementById('bookTitleInput').value}》閱讀理解測驗卷`;
+            document.getElementById('printQuizTitle').innerText = `《${document.getElementById('bookTitleInput').value}》閱讀理解測驗卷`;
+            
+            // 列印所有題庫內容
             questionBank.forEach((item, index) => {
                 const qDiv = document.createElement('div');
                 qDiv.className = "print-question";
-                let html = `<div>(       ) ${index + 1}. ${item.q}</div><div class="print-options">`;
+                let html = `<div><span class="print-bracket">(       )</span> ${index + 1}. ${item.q}</div><div class="print-options">`;
                 item.options.forEach((opt, i) => { html += `<div>(${String.fromCharCode(65 + i)}) ${opt}</div>`; });
                 html += `</div>`;
                 qDiv.innerHTML = html;
                 container.appendChild(qDiv);
             });
             window.print();
+        }
+
+        function bufferToWav(abuffer) {
+            let n = abuffer.numberOfChannels, len = abuffer.length * n * 2 + 44,
+                buf = new ArrayBuffer(len), view = new DataView(buf),
+                chans = [], i, s, o = 0, p = 0;
+            const u16 = (d) => { view.setUint16(p, d, true); p += 2; };
+            const u32 = (d) => { view.setUint32(p, d, true); p += 4; };
+            u32(0x46464952); u32(len - 8); u32(0x45564157); u32(0x20746d66); u32(16); u16(1); u16(n);
+            u32(abuffer.sampleRate); u32(abuffer.sampleRate * 2 * n); u16(n * 2); u16(16); u32(0x61746164); u32(len - p - 4);
+            for(i = 0; i < n; i++) chans.push(abuffer.getChannelData(i));
+            while(p < len) {
+                for(i = 0; i < n; i++) {
+                    s = Math.max(-1, Math.min(1, chans[i][o]));
+                    s = (0.5 + s < 0 ? s * 32768 : s * 32767)|0;
+                    view.setInt16(p, s, true); p += 2;
+                }
+                o++;
+            }
+            return new Blob([buf], {type: "audio/wav"});
         }
     </script>
 </body>
