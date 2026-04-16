@@ -10,7 +10,7 @@
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f0f9ff;
+            background-color: #f8fafc;
         }
 
         .rounded-card {
@@ -42,99 +42,110 @@
         /* 自定義捲軸 */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #bfdbfe; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <!-- 網頁 UI 區塊 -->
-    <div class="max-w-5xl mx-auto no-print">
-        <header class="text-center mb-6">
-            <h1 class="text-4xl font-bold text-blue-600 mb-2">🔴 圈圈村有聲書製作平台 ⚪</h1>
-            <p class="text-gray-600">分段錄製故事，輕鬆製作整本有聲書！</p>
+    <div class="max-w-6xl mx-auto no-print">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-2 flex items-center justify-center gap-3">
+                <span>💎</span> 寶石鑑定室有聲書製作平台 <span>💎</span>
+            </h1>
+            <p class="text-slate-500 text-lg">分段錄製故事，打造屬於您的精美有聲書！</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
             
-            <!-- Left Side: Story Editor (Span 7) -->
-            <div class="lg:col-span-7 space-y-4">
-                <div class="bg-white p-6 rounded-card shadow-xl border-4 border-blue-200">
+            <!-- Left Side: Story Editor -->
+            <div class="lg:col-span-7">
+                <div class="bg-white p-6 rounded-card shadow-xl border-4 border-indigo-100 h-full flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-700 flex items-center">
+                        <h2 class="text-xl font-bold text-slate-700 flex items-center">
                             <span class="mr-2">✍️</span> 故事內容編輯
                         </h2>
                         <div class="flex space-x-2">
-                            <button id="micBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-all shadow-lg flex items-center font-bold">
+                            <button id="micBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full transition-all shadow-lg flex items-center font-bold">
                                 <span id="micIcon" class="mr-2 text-xl">🎤</span>
                                 <span id="micText">開始錄音</span>
                             </button>
-                            <button id="clearAllBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-500 px-4 py-2 rounded-full text-sm font-medium">重置全部</button>
+                            <button id="clearAllBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-500 px-4 py-2 rounded-full text-sm font-medium">重置全部</button>
                         </div>
                     </div>
                     
-                    <textarea id="storyEditor" class="w-full h-96 p-5 border-2 border-dashed border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none text-lg leading-relaxed custom-scroll" placeholder="點擊錄音鈕開始說故事內容... 文字會隨錄音累加在此。"></textarea>
+                    <textarea id="storyEditor" class="flex-1 w-full min-h-[400px] p-6 border-2 border-dashed border-indigo-50 rounded-2xl focus:ring-2 focus:ring-indigo-400 outline-none text-xl leading-relaxed custom-scroll bg-indigo-50/10" placeholder="點擊錄音鈕開始說故事內容... 文字會隨錄音累加在此。"></textarea>
                 </div>
             </div>
 
-            <!-- Right Side: Audio Management & Quiz (Span 5) -->
-            <div class="lg:col-span-5 space-y-4">
-                
-                <!-- Audio Segments List -->
-                <div class="bg-white p-6 rounded-card shadow-xl border-4 border-green-200 flex flex-col h-[500px]">
+            <!-- Right Side: Audio Management -->
+            <div class="lg:col-span-5">
+                <div class="bg-white p-6 rounded-card shadow-xl border-4 border-emerald-100 flex flex-col h-full min-h-[500px]">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-700">🎧 有聲書分段 (頁數)</h2>
-                        <button id="mergeBtn" class="hidden bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+                        <h2 class="text-xl font-bold text-slate-700 flex items-center">
+                            <span class="mr-2">🎧</span> 有聲書分段 (頁數)
+                        </h2>
+                        <button id="mergeBtn" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-md transition-all">
                             📦 合併下載整本
                         </button>
                     </div>
                     
                     <div id="segmentsList" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scroll">
-                        <p class="text-gray-400 text-center py-10 italic">尚未錄製任何段落</p>
+                        <div class="flex flex-col items-center justify-center h-full text-slate-300 italic py-10">
+                            <span class="text-5xl mb-4">📀</span>
+                            <p>尚未錄製任何段落</p>
+                        </div>
                     </div>
 
-                    <div id="mergeLoading" class="hidden mt-2 text-center text-sm text-blue-500 font-bold animate-pulse">
-                        正在合併音檔中，請稍候...
+                    <div id="mergeLoading" class="hidden mt-4 text-center text-sm text-indigo-500 font-bold animate-pulse">
+                        💎 正在鑑定並合併音檔中，請稍候...
                     </div>
-                </div>
-
-                <!-- Quiz Panel -->
-                <div class="bg-white p-6 rounded-card shadow-xl border-4 border-orange-200">
-                    <div class="flex gap-2">
-                        <button id="startQuizBtn" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-md transition-all flex flex-col items-center">
-                            <span class="text-xl mb-1">📝</span>
-                            <span class="text-sm">線上測驗</span>
-                        </button>
-                        <button onclick="preparePrint()" class="flex-1 bg-white hover:bg-gray-50 text-green-600 border-2 border-green-200 font-bold py-4 rounded-2xl shadow-md transition-all flex flex-col items-center">
-                            <span class="text-xl mb-1">🖨️</span>
-                            <span class="text-sm">列印 A4 卷</span>
-                        </button>
-                    </div>
-                    <button id="viewBankBtn" class="w-full mt-2 text-blue-400 text-xs hover:underline">查看題庫</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Bottom Control Panel: Three Columns Layout -->
+        <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 1. Question Bank -->
+            <button id="viewBankBtn" class="bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-6 rounded-2xl border-2 border-sky-100 transition-all flex flex-col items-center justify-center gap-2 group">
+                <span class="text-3xl group-hover:scale-110 transition-transform">🔍</span>
+                <span class="text-lg">查看完整題庫</span>
+            </button>
+
+            <!-- 2. Online Quiz -->
+            <button id="startQuizBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-6 rounded-2xl shadow-lg transition-all flex flex-col items-center justify-center gap-2 group">
+                <span class="text-3xl group-hover:scale-110 transition-transform">📝</span>
+                <span class="text-lg">立即線上測驗</span>
+            </button>
+
+            <!-- 3. Print A4 -->
+            <button onclick="preparePrint()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold py-6 rounded-2xl border-2 border-emerald-100 transition-all flex flex-col items-center justify-center gap-2 group">
+                <span class="text-3xl group-hover:scale-110 transition-transform">🖨️</span>
+                <span class="text-lg">列印 A4 測驗卷</span>
+            </button>
         </div>
     </div>
 
     <!-- 測驗 Modal -->
-    <div id="quizModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 no-print">
-        <div class="bg-white w-full max-w-2xl rounded-card shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+    <div id="quizModal" class="fixed inset-0 bg-slate-900/80 hidden z-50 flex items-center justify-center p-4 no-print backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl rounded-card shadow-2xl p-8 max-h-[90vh] overflow-y-auto border-t-8 border-orange-500">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
-                <h3 class="text-2xl font-bold text-orange-600">圈圈村挑戰賽</h3>
-                <button onclick="closeQuiz()" class="text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
+                <h3 class="text-2xl font-bold text-orange-600">💎 寶石挑戰賽 💎</h3>
+                <button onclick="closeQuiz()" class="text-slate-400 hover:text-slate-600 text-3xl font-bold transition-colors">&times;</button>
             </div>
             <div id="quizBody" class="space-y-6"></div>
             <div id="quizFooter" class="mt-8 flex justify-between items-center gap-4 border-t pt-4">
-                <p id="quizProgress" class="text-gray-500 font-bold">第 1 / 5 題</p>
+                <p id="quizProgress" class="text-slate-500 font-bold">第 1 / 5 題</p>
                 <div id="feedbackMsg" class="font-bold text-lg"></div>
-                <button id="nextBtn" class="hidden bg-blue-600 text-white px-8 py-2 rounded-full font-bold">下一題</button>
-                <button id="restartBtn" class="hidden bg-green-600 text-white px-8 py-2 rounded-full font-bold">重新抽題</button>
+                <button id="nextBtn" class="hidden bg-indigo-600 text-white px-8 py-2 rounded-full font-bold shadow-md hover:bg-indigo-700 transition-colors">下一題 ➡️</button>
+                <button id="restartBtn" class="hidden bg-emerald-600 text-white px-8 py-2 rounded-full font-bold shadow-md hover:bg-emerald-700 transition-colors">重新抽題</button>
             </div>
         </div>
     </div>
 
     <!-- 紙本輸出區塊 -->
     <div id="paperOutput" class="print-area">
-        <h1 class="text-3xl font-bold text-center mb-8">《圈圈村》閱讀理解測驗卷</h1>
+        <h1 class="text-3xl font-bold text-center mb-8">《圈圈村》閱讀理解測驗卷 (寶石鑑定室版)</h1>
         <div class="flex justify-between mb-8 border-b-2 border-black pb-2">
             <span>班級：__________</span> <span>座號：__________</span> <span>姓名：__________</span> <span>得分：__________</span>
         </div>
@@ -142,19 +153,19 @@
     </div>
 
     <script>
-        // --- 資料設定 ---
+        // --- 題庫資料 ---
         const questionBank = [
             { q: "從天空中往下看，圈圈村的形狀看起來像什麼呢？", options: ["一個大三角形", "一個甜甜圈", "一塊大餅乾", "一顆愛心"], ans: 1 },
             { q: "圈圈村的人，長相通常具備什麼特徵？", options: ["全身上下都是尖尖的", "鼻子、眼睛、臉都是圓圓的", "每個人都戴著尖尖的帽子", "他們長得非常高大"], ans: 1 },
             { q: "下列哪一個不是圈圈村裡「圓圓的東西」？", options: ["鵝卵石", "路燈", "長椅", "尖尖的鐵剪刀"], ans: 3 },
             { q: "尖尖人阿三出現在西瓜田時，手裡拿著什麼東西？", options: ["圓圓的氣球", "尖尖的鐵剪刀", "一個大籃子", "圓圓的大剪刀"], ans: 1 },
             { q: "尖尖人阿三在逃跑的過程中，不小心弄破了什麼？", options: ["西瓜伯的西瓜", "村長的垃圾桶", "小朋友的氣球", "牆上的大橘貓"], ans: 2 },
-            { q: "村民們為什麼要一直追趕尖尖人阿三？", options: ["因為大家誤以為他是小偷", "因為阿三邀請大家跑步", "因為阿三長得比較帥", "以上皆非"], ans: 0 },
+            { q: "村民們為什麼要一直追趕尖尖人阿三？", options: ["因為大家誤以為他是小偷", "因為阿三邀請大家跑步", "因為大家喜歡追著尖尖的東西跑", "以上皆非"], ans: 0 },
             { q: "最後是誰出面解釋，才解開了大家的誤會？", options: ["村長", "小小朋友", "大橘貓", "西瓜伯"], ans: 3 },
-            { q: "這個故事想要告訴我們什麼道理呢？", options: ["多運動好健康", "不可以只看外表就誤會別人", "尖尖的東西很有用", "西瓜要選圓的"], ans: 1 }
+            { q: "這個故事想要告訴我們什麼道理呢？", options: ["多運動好健康", "不可以只看外表就誤會別人", "尖尖的東西很有用", "西瓜要選大顆的"], ans: 1 }
         ];
 
-        // --- 變數與初始化 ---
+        // --- 狀態管理 ---
         let segments = [];
         let isRecording = false;
         let mediaRecorder;
@@ -168,7 +179,7 @@
         const segmentsList = document.getElementById('segmentsList');
         const mergeBtn = document.getElementById('mergeBtn');
 
-        // --- 錄音與語音轉文字邏輯 ---
+        // --- 錄音與語音辨識 ---
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = true;
@@ -180,7 +191,6 @@
                     if (e.results[i].isFinal) final += e.results[i][0].transcript;
                 }
                 if (final) {
-                    // 累加文字
                     const lastChar = storyEditor.value.trim().slice(-1);
                     const separator = (lastChar && !['。','！','？'].includes(lastChar)) ? '，' : ' ';
                     storyEditor.value = (storyEditor.value.trim() ? storyEditor.value.trim() + separator : "") + final;
@@ -212,9 +222,9 @@
                 
                 isRecording = true;
                 micBtn.classList.add('voice-active');
-                micText.innerText = "錄音中/按我結束";
+                micText.innerText = "錄音中...點我停止";
             } catch (err) {
-                alert("無法存取麥克風，請檢查權限。");
+                alert("無法存取麥克風，請檢查權限設定。");
             }
         }
 
@@ -223,7 +233,7 @@
             if (recognition) recognition.stop();
             isRecording = false;
             micBtn.classList.remove('voice-active');
-            micText.innerText = "繼續錄音";
+            micText.innerText = "繼續錄下一頁";
         }
 
         function addSegment(blob, url) {
@@ -233,25 +243,30 @@
 
         function renderSegments() {
             if (segments.length === 0) {
-                segmentsList.innerHTML = `<p class="text-gray-400 text-center py-10 italic">尚未錄製任何段落</p>`;
+                segmentsList.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-slate-300 italic py-10">
+                        <span class="text-5xl mb-4">📀</span>
+                        <p>尚未錄製任何段落</p>
+                    </div>
+                `;
                 mergeBtn.classList.add('hidden');
                 return;
             }
 
             mergeBtn.classList.remove('hidden');
             segmentsList.innerHTML = segments.map((seg, i) => `
-                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 flex items-center justify-between gap-2 shadow-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold">${i + 1}</span>
-                        <audio src="${seg.url}" controls class="h-8 w-32 md:w-40"></audio>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between gap-3 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-600 text-white w-7 h-7 rounded-full text-xs flex items-center justify-center font-bold shadow-sm">P${i + 1}</span>
+                        <audio src="${seg.url}" controls class="h-8 w-32 md:w-48"></audio>
                     </div>
-                    <div class="flex gap-1">
-                        <a href="${seg.url}" download="段落${i+1}.webm" class="text-blue-500 hover:text-blue-700 p-1" title="下載此段">
+                    <div class="flex gap-2">
+                        <a href="${seg.url}" download="寶石鑑定室_段落${i+1}.webm" class="text-indigo-500 hover:bg-indigo-50 p-2 rounded-full transition-colors" title="下載此段">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
                         </a>
-                        <button onclick="deleteSegment(${i})" class="text-red-400 hover:text-red-600 p-1" title="刪除">
+                        <button onclick="deleteSegment(${i})" class="text-red-400 hover:bg-red-50 p-2 rounded-full transition-colors" title="刪除">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -262,7 +277,7 @@
         }
 
         window.deleteSegment = (idx) => {
-            if (confirm(`確定要刪除第 ${idx + 1} 段錄音嗎？`)) {
+            if (confirm(`確定要刪除第 ${idx + 1} 頁錄音嗎？`)) {
                 segments.splice(idx, 1);
                 renderSegments();
             }
@@ -277,13 +292,12 @@
             }
         };
 
-        // --- 合併音檔功能 (使用 AudioContext) ---
+        // --- 音檔合併功能 ---
         mergeBtn.onclick = async () => {
             if (segments.length < 2) {
-                alert("至少需要兩個段落才能合併喔！");
+                alert("至少需要兩段音軌才能進行合併喔！");
                 return;
             }
-
             const loading = document.getElementById('mergeLoading');
             loading.classList.remove('hidden');
             mergeBtn.disabled = true;
@@ -295,7 +309,6 @@
                     return await audioCtx.decodeAudioData(arrayBuffer);
                 }));
 
-                // 計算總長度
                 const totalLength = buffers.reduce((acc, buf) => acc + buf.length, 0);
                 const finalBuffer = audioCtx.createBuffer(
                     buffers[0].numberOfChannels,
@@ -303,7 +316,6 @@
                     buffers[0].sampleRate
                 );
 
-                // 串接 Buffer
                 let offset = 0;
                 for (const buf of buffers) {
                     for (let channel = 0; channel < buf.numberOfChannels; channel++) {
@@ -312,64 +324,44 @@
                     offset += buf.length;
                 }
 
-                // 轉為 WAV 下載
                 const wavBlob = bufferToWav(finalBuffer);
                 const url = URL.createObjectURL(wavBlob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = "圈圈村完整有聲書.wav";
+                a.download = "寶石鑑定室_完整有聲書.wav";
                 a.click();
             } catch (err) {
                 console.error(err);
-                alert("合併音檔時發生錯誤，可能是音訊格式不相容。");
+                alert("合併失敗，請確認音訊格式支援。");
             } finally {
                 loading.classList.add('hidden');
                 mergeBtn.disabled = false;
             }
         };
 
-        // 簡單的 WAV 編碼器 (Helper)
         function bufferToWav(abuffer) {
-            let numOfChan = abuffer.numberOfChannels,
-                length = abuffer.length * numOfChan * 2 + 44,
-                buffer = new ArrayBuffer(length),
-                view = new DataView(buffer),
-                channels = [], i, sample,
-                offset = 0,
-                pos = 0;
-
-            setUint32(0x46464952);                         
-            setUint32(length - 8);                         
-            setUint32(0x45564157);                         
-            setUint32(0x20746d66);                         
-            setUint32(16);                                 
-            setUint16(1);                                  
-            setUint16(numOfChan);
-            setUint32(abuffer.sampleRate);
-            setUint32(abuffer.sampleRate * 2 * numOfChan); 
-            setUint16(numOfChan * 2);                      
-            setUint16(16);                                 
-            setUint32(0x61746164);                         
-            setUint32(length - pos - 4);                   
-
+            let numOfChan = abuffer.numberOfChannels, length = abuffer.length * numOfChan * 2 + 44,
+                buffer = new ArrayBuffer(length), view = new DataView(buffer),
+                channels = [], i, sample, offset = 0, pos = 0;
+            const setUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
+            const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
+            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
+            setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan);
+            setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
             for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
             while(pos < length) {
-                for(i = 0; i < numOfChan; i++) {           
-                    sample = Math.max(-1, Math.min(1, channels[i][offset])); 
-                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0; 
-                    view.setInt16(pos, sample, true);      
-                    pos += 2;
+                for(i = 0; i < numOfChan; i++) {
+                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0;
+                    view.setInt16(pos, sample, true); pos += 2;
                 }
-                offset++;                                  
+                offset++;
             }
-
             return new Blob([buffer], {type: "audio/wav"});
-
-            function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
-            function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
         }
 
-        // --- 測驗與列印 (沿用先前邏輯) ---
+        // --- 測驗與列印邏輯 ---
         let selectedQuestions = [];
         let currentIdx = 0;
         let score = 0;
@@ -388,9 +380,9 @@
             document.getElementById('nextBtn').classList.add('hidden');
             document.getElementById('restartBtn').classList.add('hidden');
             document.getElementById('quizBody').innerHTML = `
-                <div class="text-xl font-bold text-gray-800 mb-4">${data.q}</div>
-                <div class="grid grid-cols-1 gap-3">
-                    ${data.options.map((opt, i) => `<button onclick="checkAns(${i})" class="text-left p-4 rounded-xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}
+                <div class="text-xl font-bold text-slate-800 mb-6 bg-slate-50 p-4 rounded-xl border-l-4 border-indigo-500">${data.q}</div>
+                <div class="grid grid-cols-1 gap-4">
+                    ${data.options.map((opt, i) => `<button onclick="checkAns(${i})" class="text-left p-4 rounded-2xl border-2 border-slate-100 hover:border-indigo-400 hover:bg-indigo-50 transition-all font-medium text-lg flex items-center"><span class="bg-slate-200 text-slate-600 w-8 h-8 rounded-full flex items-center justify-center mr-3 font-bold">${String.fromCharCode(65+i)}</span> ${opt}</button>`).join('')}
                 </div>`;
         }
 
@@ -399,13 +391,13 @@
             const btns = document.getElementById('quizBody').querySelectorAll('button');
             btns.forEach(b => b.disabled = true);
             if (idx === data.ans) {
-                btns[idx].classList.add('bg-green-100', 'border-green-500');
-                document.getElementById('feedbackMsg').innerHTML = "<span class='text-green-600'>正確！✨</span>";
+                btns[idx].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                document.getElementById('feedbackMsg').innerHTML = "<span class='text-green-600'>答對了！閃閃發光 ✨</span>";
                 score++;
             } else {
-                btns[idx].classList.add('bg-red-100', 'border-red-500');
+                btns[idx].classList.add('bg-red-100', 'border-red-500', 'text-red-800');
                 btns[data.ans].classList.add('bg-green-50', 'border-green-300');
-                document.getElementById('feedbackMsg').innerHTML = "<span class='text-red-500'>加油！💪</span>";
+                document.getElementById('feedbackMsg').innerHTML = "<span class='text-red-500'>加油！再鑑定一次 💎</span>";
             }
             if (currentIdx < 4) document.getElementById('nextBtn').classList.remove('hidden');
             else showResult();
@@ -414,13 +406,13 @@
         document.getElementById('nextBtn').onclick = () => { currentIdx++; showQuestion(); };
 
         function showResult() {
-            document.getElementById('quizBody').innerHTML = `<div class="text-center py-8"><h4 class="text-3xl font-bold mb-2">測驗結束</h4><p class="text-2xl text-blue-600">得分：${score * 20}</p></div>`;
+            document.getElementById('quizBody').innerHTML = `<div class="text-center py-8"><h4 class="text-4xl font-bold mb-4">測驗結束</h4><div class="text-6xl mb-4">${score === 5 ? '💎' : '⭐'}</div><p class="text-2xl text-indigo-600 font-bold">鑑定得分：${score * 20} 分</p></div>`;
             document.getElementById('restartBtn').classList.remove('hidden');
             document.getElementById('restartBtn').onclick = () => { document.getElementById('startQuizBtn').click(); };
         }
 
         window.closeQuiz = () => document.getElementById('quizModal').classList.add('hidden');
-        document.getElementById('viewBankBtn').onclick = () => alert(questionBank.map((v, i) => (i+1) + ". " + v.q).join("\n"));
+        document.getElementById('viewBankBtn').onclick = () => alert("【寶石鑑定室 - 完整題庫】\n\n" + questionBank.map((v, i) => (i+1) + ". " + v.q).join("\n"));
 
         function preparePrint() {
             const container = document.getElementById('printQuestionContainer');
