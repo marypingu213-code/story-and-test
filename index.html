@@ -21,7 +21,7 @@
         @media print {
             .no-print { display: none !important; }
             body { background-color: white !important; padding: 0 !important; }
-            @page { margin: 1cm; size: A4; } 
+            @page { margin: 1.5cm; size: A4; } 
             
             .print-area { display: block !important; width: 100%; }
             .print-header-small { text-align: right; font-size: 9pt; color: #666; margin-bottom: 5px; }
@@ -43,19 +43,6 @@
         .print-area { display: none; }
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #6366f1;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -65,7 +52,7 @@
             <h1 class="text-4xl font-bold text-indigo-700 mb-2 flex items-center justify-center gap-3">
                 <span>💎</span> 寶石鑑定室有聲書製作平台 <span>💎</span>
             </h1>
-            <p class="text-slate-500 text-lg">錄製故事、AI 智慧出題，打造專屬學習教材！</p>
+            <p class="text-slate-500 text-lg">分段錄製故事，手動編輯題庫並挑戰測驗！</p>
         </header>
 
         <!-- 上半部：錄音與故事編輯 -->
@@ -78,10 +65,10 @@
                             <button id="micBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full transition-all shadow-lg flex items-center font-bold">
                                 <span id="micIcon" class="mr-2 text-xl">🎤</span><span id="micText">錄音轉文字</span>
                             </button>
-                            <button id="clearAllBtn" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-sm font-medium">重置頁面</button>
+                            <button id="clearAllBtn" onclick="window.resetPage()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-sm font-medium">重置頁面</button>
                         </div>
                     </div>
-                    <textarea id="storyEditor" class="flex-1 w-full min-h-[400px] p-6 border-2 border-dashed border-indigo-50 rounded-2xl focus:ring-2 focus:ring-indigo-400 outline-none text-xl leading-relaxed custom-scroll bg-indigo-50/10" placeholder="在此輸入或錄製故事內容，這將會是 AI 出題的依據喔！"></textarea>
+                    <textarea id="storyEditor" class="flex-1 w-full min-h-[400px] p-6 border-2 border-dashed border-indigo-50 rounded-2xl focus:ring-2 focus:ring-indigo-400 outline-none text-xl leading-relaxed custom-scroll bg-indigo-50/10" placeholder="在此輸入內容，文字將同步顯示於下方檢視區..."></textarea>
                 </div>
             </div>
 
@@ -104,7 +91,7 @@
             </div>
         </div>
 
-        <!-- 下半部：六大功能區 -->
+        <!-- 下半部：六大功能區 (白色背景統一編號) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <!-- 1. 繪本名稱 -->
             <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 min-h-[180px]">
@@ -113,35 +100,35 @@
                 <div id="bookAudioContainer" class="hidden w-full mt-2"><audio id="bookAudioPlayer" controls class="w-full h-8 shadow-inner"></audio></div>
             </div>
 
-            <!-- 2. 內容檢視 -->
+            <!-- 2. 內容檢視 (更換 Emoji) -->
             <div class="bg-white p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 min-h-[180px]">
                 <span class="text-3xl">✨</span><label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">2. 內容檢視</label>
-                <div id="fullTextDisplay" class="text-[10px] text-slate-400 h-24 overflow-y-auto px-2 leading-tight custom-scroll italic w-full text-left">尚未錄製文字內容...</div>
+                <div id="fullTextDisplay" class="text-[10px] text-slate-400 h-24 overflow-y-auto px-2 leading-tight custom-scroll italic w-full">尚未錄製文字內容...</div>
             </div>
 
             <!-- 3. 題庫編輯 -->
-            <button onclick="openBankEditor()" class="bg-white hover:bg-sky-50 p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
+            <button onclick="window.openBankEditor()" class="bg-white hover:bg-sky-50 p-4 rounded-card shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
                 <span class="text-3xl group-hover:rotate-12 transition-all">⚙️</span>
                 <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">3. 題庫編輯</label>
                 <span class="text-sky-600 font-bold text-sm">編輯完整題庫</span>
             </button>
 
             <!-- 4. 匯出題庫資料 -->
-            <button onclick="exportQuestionBank()" class="bg-white hover:bg-indigo-50 p-4 rounded-card shadow-lg border-2 border-indigo-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
+            <button onclick="window.exportQuestionBank()" class="bg-white hover:bg-indigo-50 p-4 rounded-card shadow-lg border-2 border-indigo-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
                 <span class="text-3xl group-hover:scale-110 transition-all">📥</span>
                 <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">4. 匯出題庫</label>
                 <span class="text-indigo-600 font-bold text-sm">匯出題庫 JSON</span>
             </button>
 
-            <!-- 5. 立即線上測驗 -->
-            <button onclick="startRandomQuiz()" class="bg-white hover:bg-orange-50 p-4 rounded-card shadow-lg border-2 border-orange-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
+            <!-- 5. 立即線上測驗 (白色背景) -->
+            <button onclick="window.startRandomQuiz()" class="bg-white hover:bg-orange-50 p-4 rounded-card shadow-lg border-2 border-orange-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
                 <span class="text-3xl group-hover:scale-110 transition-all">✍️</span>
                 <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">5. 線上測驗</label>
                 <span class="text-orange-600 font-bold text-sm">開始挑戰答題</span>
             </button>
 
-            <!-- 6. 列印 A4 測驗卷 -->
-            <button onclick="preparePrint()" class="bg-white hover:bg-emerald-50 p-4 rounded-card shadow-lg border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
+            <!-- 6. 列印 A4 測驗卷 (白色背景) -->
+            <button onclick="window.preparePrint()" class="bg-white hover:bg-emerald-50 p-4 rounded-card shadow-lg border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-2 transition-all group min-h-[180px]">
                 <span class="text-3xl group-hover:-translate-y-1 transition-all">🖨️</span>
                 <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">6. 紙本測驗</label>
                 <span class="text-emerald-700 font-bold text-sm">輸出紙本測驗</span>
@@ -149,12 +136,12 @@
         </div>
     </div>
 
-    <!-- 測驗燈箱 -->
+    <!-- 測驗與編輯燈箱 -->
     <div id="quizModal" class="fixed inset-0 bg-slate-900/80 hidden z-50 flex items-center justify-center p-4 no-print backdrop-blur-sm">
         <div class="bg-white w-full max-w-2xl rounded-card shadow-2xl p-8 max-h-[90vh] overflow-y-auto border-t-8 border-orange-500">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <h3 class="text-2xl font-bold text-orange-600">💎 寶石挑戰賽 💎</h3>
-                <button onclick="closeModal('quizModal')" class="text-slate-400 hover:text-slate-600 text-3xl font-bold">&times;</button>
+                <button onclick="window.closeModal('quizModal')" class="text-slate-400 hover:text-slate-600 text-3xl font-bold">&times;</button>
             </div>
             <div id="quizBody" class="space-y-6"></div>
             <div id="quizFooter" class="mt-8 flex justify-between items-center gap-4 border-t pt-4">
@@ -166,29 +153,16 @@
         </div>
     </div>
 
-    <!-- 題庫編輯燈箱 (整合 AI) -->
     <div id="bankModal" class="fixed inset-0 bg-slate-900/80 hidden z-50 flex items-center justify-center p-4 no-print backdrop-blur-sm">
         <div class="bg-white w-full max-w-4xl rounded-card shadow-2xl p-8 max-h-[90vh] overflow-y-auto border-t-8 border-sky-500">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4 gap-4">
-                <h3 class="text-2xl font-bold text-sky-600 flex items-center gap-2">⚙️ 編輯題庫 <span class="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full font-normal">教師管理模式</span></h3>
-                <div class="flex gap-2">
-                    <button id="aiGenBtn" onclick="generateAIQuestions()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full font-bold shadow-md flex items-center gap-2 text-sm transition-all">
-                        <span>🤖</span> AI 智慧出題
-                    </button>
-                    <button onclick="closeModal('bankModal')" class="text-slate-400 hover:text-slate-600 text-3xl font-bold">&times;</button>
-                </div>
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-2xl font-bold text-sky-600">⚙️ 編輯測驗題庫</h3>
+                <button onclick="window.closeModal('bankModal')" class="text-slate-400 hover:text-slate-600 text-3xl font-bold">&times;</button>
             </div>
-            
-            <!-- AI 生成狀態 -->
-            <div id="aiStatus" class="hidden mb-6 p-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl flex items-center justify-center gap-4">
-                <div class="loading-spinner"></div>
-                <div class="text-indigo-700 font-bold">AI 老師正在鑑定故事內容並構思題目中...</div>
-            </div>
-
             <div id="bankEditorList" class="space-y-8"></div>
             <div class="mt-8 pt-4 border-t flex justify-end gap-2">
-                <button onclick="addNewQuestion()" class="bg-indigo-50 text-indigo-600 px-6 py-2 rounded-full font-bold">➕ 手動新增</button>
-                <button onclick="saveBankChanges()" class="bg-sky-600 text-white px-10 py-2 rounded-full font-bold shadow-lg">💾 儲存並關閉</button>
+                <button onclick="window.addNewQuestion()" class="bg-indigo-50 text-indigo-600 px-6 py-2 rounded-full font-bold">➕ 新增題目</button>
+                <button onclick="window.saveBankChanges()" class="bg-sky-600 text-white px-10 py-2 rounded-full font-bold shadow-lg">💾 儲存並關閉</button>
             </div>
         </div>
     </div>
@@ -204,10 +178,14 @@
     </div>
 
     <script>
-        // --- 初始化資料 ---
+        // --- 核心資料 ---
         let questionBank = [
             { q: "從天空中往下看，圈圈村的形狀看起來像什麼呢？", options: ["一個大三角形", "一個甜甜圈", "一塊大餅乾", "一顆愛心"], ans: 1 },
-            { q: "圈圈村的人，長相通常具備什麼特徵？", options: ["全身上下都是尖尖的", "鼻子、眼睛、臉都是圓圓的", "每個人都戴著尖尖的帽子", "他們長得非常高大"], ans: 1 }
+            { q: "圈圈村的人，長相通常具備什麼特徵？", options: ["全身上下都是尖尖的", "鼻子、眼睛、臉都是圓圓的", "每個人都戴著尖尖的帽子", "他們長得非常高大"], ans: 1 },
+            { q: "下列哪一個不是圈圈村裡「圓圓的東西」？", options: ["鵝卵石", "路燈", "長椅", "尖尖的鐵剪刀"], ans: 3 },
+            { q: "尖尖人阿三出現在西瓜田時，手裡拿著什麼東西？", options: ["圓圓的氣球", "尖尖的鐵剪刀", "一個大籃子", "圓圓的大剪刀"], ans: 1 },
+            { q: "尖尖人阿三在逃跑的過程中，不小心弄破了什麼？", options: ["西瓜伯的西瓜", "村長的垃圾桶", "小朋友的氣球", "牆上的大橘貓"], ans: 2 },
+            { q: "最後是誰出面解釋，才解開了大家的誤會？", options: ["村長", "小小朋友", "大橘貓", "西瓜伯"], ans: 3 }
         ];
 
         let segments = [];
@@ -221,10 +199,10 @@
         const bookAudioPlayer = document.getElementById('bookAudioPlayer');
         const bookTitleInput = document.getElementById('bookTitleInput');
 
-        // 文字同步
+        // 文字即時同步
         storyEditor.addEventListener('input', () => { fullTextDisplay.innerText = storyEditor.value || "尚未錄製文字內容..."; });
 
-        // 錄音與語音轉文字
+        // --- 錄音功能 ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
@@ -282,7 +260,7 @@
                         <span class="bg-indigo-600 text-white w-7 h-7 rounded-full text-[10px] flex items-center justify-center font-bold">P${i + 1} ✅</span>
                         <audio src="${seg.url}" controls class="h-8 w-40"></audio>
                     </div>
-                    <button class="text-red-400 p-2" onclick="removeSegment(${i})">🗑️</button>
+                    <button class="text-red-400 p-2" onclick="window.removeSegment(${i})">🗑️</button>
                 </div>
             `).join('');
             if (segments.length === 0) list.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-300 italic py-10"><p>尚未錄製段落</p></div>`;
@@ -290,7 +268,7 @@
 
         window.removeSegment = (idx) => { if (confirm("確定刪除這段錄音嗎？")) { segments.splice(idx, 1); renderSegments(); } };
 
-        // --- 音檔合併 ---
+        // --- 音檔與匯出功能 ---
         async function getMergedBlob() {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const buffers = await Promise.all(segments.map(async s => ctx.decodeAudioData(await s.blob.arrayBuffer())));
@@ -319,110 +297,34 @@
             a.click();
         };
 
-        // --- AI 智慧出題邏輯 ---
-        async function generateAIQuestions() {
-            const storyText = storyEditor.value.trim();
-            if (storyText.length < 20) {
-                alert("故事內容太短了，請多輸入一些文字再讓 AI 鑑定出題喔！");
-                return;
-            }
+        window.exportQuestionBank = () => {
+            if (questionBank.length === 0) return alert("題庫目前沒有題目可以匯出！");
+            const exportData = { bookTitle: bookTitleInput.value, exportDate: new Date().toLocaleString(), questions: questionBank };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${bookTitleInput.value}_題庫匯出.json`;
+            a.click();
+            alert("題庫已成功匯出 JSON！");
+        };
 
-            const aiGenBtn = document.getElementById('aiGenBtn');
-            const aiStatus = document.getElementById('aiStatus');
-            aiGenBtn.disabled = true;
-            aiStatus.classList.remove('hidden');
-
-            const apiKey = ""; // 執行環境提供
-            const systemPrompt = `你是一位專業的小學低年級教師。請根據使用者提供的繪本故事內容，設計 10 道測驗題。
-            要求：
-            1. 難度適合國小三年級以下程度。
-            2. 題目包含事實記憶（例如角色名字）、文意辨識及簡單的邏輯推理（例如為什麼這件事會發生）。
-            3. 每題必須有 4 個選項，並標註正確答案的索引 (0-3)。
-            4. 題目請以 JSON 格式輸出。`;
-            
-            const userQuery = `以下是故事內容：\n\n${storyText}\n\n請根據此故事生成 10 道測驗題。`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: { 
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            questions: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        q: { type: "STRING" },
-                                        options: { type: "ARRAY", items: { type: "STRING" } },
-                                        ans: { type: "NUMBER" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-
-            let retryCount = 0;
-            const maxRetries = 5;
-
-            async function callAI() {
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) throw new Error("API Request Failed");
-
-                    const result = await response.json();
-                    const aiResult = JSON.parse(result.candidates[0].content.parts[0].text);
-                    
-                    if (aiResult && aiResult.questions) {
-                        // 將 AI 生成的題目加入題庫 (覆蓋原有的或累加？這裡我們選擇累加並提供提醒)
-                        if (confirm(`AI 已經鑑定完畢並產生了 ${aiResult.questions.length} 道新題目！要將它們加入目前的題庫嗎？`)) {
-                            questionBank = aiResult.questions;
-                            openBankEditor();
-                        }
-                    }
-                } catch (error) {
-                    if (retryCount < maxRetries) {
-                        retryCount++;
-                        const delay = Math.pow(2, retryCount) * 1000;
-                        setTimeout(callAI, delay);
-                    } else {
-                        alert("AI 教師目前忙線中，請稍後再試。");
-                    }
-                } finally {
-                    aiGenBtn.disabled = false;
-                    aiStatus.classList.add('hidden');
-                }
-            }
-
-            callAI();
-        }
-
-        // --- 題庫與編輯邏輯 ---
-        function openBankEditor() {
+        // --- 題庫編輯器 ---
+        window.openBankEditor = () => {
             const list = document.getElementById('bankEditorList');
             list.innerHTML = questionBank.map((q, i) => `
                 <div class="p-6 bg-slate-50 rounded-xl border relative shadow-sm">
-                    <button class="absolute top-2 right-2 text-red-500 text-sm font-bold p-2" onclick="removeQuestion(${i})">🗑️ 刪除</button>
-                    <div class="mb-4 font-bold text-slate-700">第 ${i+1} 題：<input type="text" class="w-full p-2 mt-1 border rounded shadow-inner" id="bank_q_${i}" value="${q.q}"></div>
+                    <button class="absolute top-2 right-2 text-red-500 text-sm font-bold p-2" onclick="window.removeQuestion(${i})">🗑️ 刪除</button>
+                    <div class="mb-4 font-bold text-slate-700">第 ${i+1} 題：<input type="text" class="w-full p-2 mt-1 border rounded" id="bank_q_${i}" value="${q.q}"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         ${[0,1,2,3].map(oi => `<div>選項 ${String.fromCharCode(65+oi)}：<div class="flex items-center gap-1"><input type="text" class="flex-1 p-1 border text-sm rounded" id="bank_q_${i}_o_${oi}" value="${q.options[oi]}"><input type="radio" name="bank_c_${i}" value="${oi}" ${q.ans === oi ? 'checked' : ''}></div></div>`).join('')}
                     </div>
                 </div>
             `).join('');
             document.getElementById('bankModal').classList.remove('hidden');
-        }
+        };
 
-        window.removeQuestion = (idx) => { if(confirm("刪除這題嗎？")) { questionBank.splice(idx, 1); openBankEditor(); } };
-        window.addNewQuestion = () => { questionBank.push({ q: "請輸入題目描述", options: ["選項A", "選項B", "選項C", "選項D"], ans: 0 }); openBankEditor(); };
+        window.removeQuestion = (idx) => { if(confirm("刪除這題嗎？")) { questionBank.splice(idx, 1); window.openBankEditor(); } };
+        window.addNewQuestion = () => { questionBank.push({ q: "請輸入題目描述", options: ["選項A", "選項B", "選項C", "選項D"], ans: 0 }); window.openBankEditor(); };
         window.saveBankChanges = () => {
             const newList = [];
             questionBank.forEach((_, i) => {
@@ -434,11 +336,11 @@
                 newList.push({ q: qText, options: opts, ans: correctIdx });
             });
             questionBank = newList;
-            closeModal('bankModal');
+            window.closeModal('bankModal');
         };
 
-        // --- 線上測驗系統 (隨機化) ---
-        function startRandomQuiz() {
+        // --- 線上測驗系統 ---
+        window.startRandomQuiz = () => {
             if (questionBank.length === 0) return alert("題庫是空的！");
             let quiz = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 5).map(item => {
                 let opts = item.options.map((text, i) => ({ text, isCorrect: i === item.ans })).sort(() => Math.random() - 0.5);
@@ -459,7 +361,7 @@
                 d.options.forEach((_, i) => document.getElementById(`quiz_opt_${i}`).onclick = () => {
                     document.querySelectorAll('#quizBody button').forEach(b => b.disabled = true);
                     if (i === d.ans) {
-                        document.getElementById(`quiz_opt_${i}`).classList.add('bg-green-100', 'border-green-600');
+                        document.getElementById(`quiz_opt_${i}`).classList.add('bg-green-100', 'border-green-500');
                         document.getElementById('feedbackMsg').innerHTML = "<span class='text-green-600 font-bold'>✨ 答題正確！</span>";
                         score++;
                     } else {
@@ -475,12 +377,12 @@
                 document.getElementById('restartBtn').classList.remove('hidden');
             }
             document.getElementById('nextBtn').onclick = () => { currentIdx++; renderQ(); };
-            document.getElementById('restartBtn').onclick = startRandomQuiz;
+            document.getElementById('restartBtn').onclick = window.startRandomQuiz;
             renderQ();
-        }
+        };
 
-        // --- 列印與匯出 ---
-        function preparePrint() {
+        // --- 紙本列印 ---
+        window.preparePrint = () => {
             const container = document.getElementById('printQuestionContainer');
             container.innerHTML = "";
             document.getElementById('printQuizTitle').innerText = `《${bookTitleInput.value}》閱讀理解測驗卷`;
@@ -495,20 +397,11 @@
                 container.appendChild(qDiv);
             });
             window.print();
-        }
+        };
 
-        function exportQuestionBank() {
-            if (questionBank.length === 0) return alert("題庫目前沒有題目可以匯出喔！");
-            const exportData = { bookTitle: bookTitleInput.value, exportDate: new Date().toLocaleString(), questions: questionBank };
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `${bookTitleInput.value}_題庫匯出.json`;
-            a.click();
-        }
-
+        // --- UI 小工具 ---
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
-        document.getElementById('clearAllBtn').onclick = () => { if (confirm("確定重置當前頁面內容？")) location.reload(); };
+        window.resetPage = () => { if (confirm("確定重置當前頁面內容？")) location.reload(); };
 
         function bufferToWav(abuffer) {
             let n = abuffer.numberOfChannels, len = abuffer.length * n * 2 + 44, buf = new ArrayBuffer(len), view = new DataView(buf), chans = [], i, s, o = 0, p = 0;
